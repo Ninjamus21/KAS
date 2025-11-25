@@ -43,4 +43,9 @@ public class Konference {
     public KonferenceOrganisation getKonferenceOrganisation() {
         return konferenceOrganisation;
     }
+
+    @Override
+    public String toString() {
+        return name + " at " + address + " from " + startDato + " to " + slutDato;
+    }
 }

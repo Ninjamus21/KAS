@@ -19,6 +19,9 @@ public class Tilmelding {
     public Deltager getDeltager() {
         return deltager;
     }
+    public void setDeltager(Deltager deltager) {
+        this.deltager = deltager;
+    }
 
     public Konference getKonference() {
         return konference;
@@ -98,5 +101,6 @@ public class Tilmelding {
 
         return totalPris;
     }
+
 }
 
