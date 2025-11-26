@@ -34,7 +34,7 @@ public class Konference {
         }
     }
 
-    public Tilmelding createTilmelding(Deltager deltager){
+    public Tilmelding createTilmelding(Deltager deltager) {
         Tilmelding tilmelding = new Tilmelding(deltager, this);
         tilmeldings.add(tilmelding);
         return tilmelding;
@@ -44,8 +44,13 @@ public class Konference {
         return konferenceOrganisation;
     }
 
+    public ArrayList<Hotel> getHotels() {
+        return hotels;
+    }
+
     @Override
     public String toString() {
         return name + " at " + address + " from " + startDato + " to " + slutDato;
     }
+
 }

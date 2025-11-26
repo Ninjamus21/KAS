@@ -38,7 +38,7 @@ public class Gui extends Application {
         pane.add(VBoxdeltagerInfo, 0, 1);
         VBoxdeltagerInfo.addButton("Tilmeld Deltager", actionEvent -> {
             Konference selected = lvwKonferencer.getSelectionModel().getSelectedItem();
-            if (selected != null) {
+            if (selected == null) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Vælg venligst en konference!");
                 alert.initOwner(primaryStage);
                 alert.showAndWait();

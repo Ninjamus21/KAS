@@ -2,6 +2,7 @@ package Gui;
 
 import Model.Deltager;
 import Model.DeltagerType;
+import Model.Hotel;
 import Model.Tilmelding;
 import Storage.Storage;
 import Storage.TilmeldingManager;
@@ -23,6 +24,8 @@ public class DeltagerInformation{
     private final CheckBox chkSpeaker = new CheckBox("Speaker");
     private final ComboBox<DeltagerType> cbType = new ComboBox<>();
     private final Tilmelding tilmelding;
+    private boolean hotelAdded = false;
+    private boolean ledsagerAdded = false;
 
     public DeltagerInformation(Stage owner, Tilmelding tilmelding) {
         this.tilmelding = tilmelding;
@@ -65,8 +68,30 @@ public class DeltagerInformation{
         Button btnCancel = new Button("Cancel");
         btnSave.setOnAction(e -> saveAndClose());
         btnLedsager.setOnAction(e -> {
+            if(ledsagerAdded) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Ledsager has already been added.");
+                alert.initOwner(stage);
+                alert.showAndWait();
+                return;
+            }
             LedsagerInformation ledsagerInformation = new LedsagerInformation(stage, tilmelding);
             ledsagerInformation.showAndWait();
+        });
+        btnHotel.setOnAction(e -> {
+            if (hotelAdded){
+                Alert alert = new Alert(Alert.AlertType.INFORMATION, "Hotel has already been added.");
+                alert.initOwner(stage);
+                alert.showAndWait();
+                return;
+            }
+            HotelInformation hotelInformation = new HotelInformation(stage, tilmelding);
+            hotelInformation.showAndWait();
+            Hotel saved = hotelInformation.getSelectedHotel();
+            if (saved != null) {
+                // mark hotel as added
+                hotelAdded = true;
+                btnHotel.setDisable(true);
+            }
         });
         btnCancel.setOnAction(e -> stage.close());
         buttonBox.getChildren().addAll(btnSave, btnLedsager, btnHotel, btnCancel);
@@ -109,5 +134,11 @@ public class DeltagerInformation{
 
     public void showAndWait() {
         stage.showAndWait();
+    }
+    public void setHotelAdded(boolean hotelAdded) {
+        this.hotelAdded = hotelAdded;
+    }
+    public void setLedsagerAdded(boolean ledsagerAdded) {
+        this.ledsagerAdded = ledsagerAdded;
     }
 }

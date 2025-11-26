@@ -38,15 +38,19 @@ public class LedsagerInformation {
         root.getChildren().add(ledsagerInfoBox);
 
         SectionVBox udflugtInfoBox = new SectionVBox("Udflugter");
-        lvwUdflugter.getItems().setAll(Storage.getUdflugts());
 
         // Allow multiple selection
         lvwUdflugter.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE);
+        lvwUdflugter.getItems().setAll(Storage.getUdflugts());
         udflugtInfoBox.addLabeledNode("Vælg Udflugter", lvwUdflugter);
         root.getChildren().add(udflugtInfoBox);
 
-        Button btnOk = new Button("OK");
+        Button btnSave = new Button("Save and Close");
+        Button btnCancel = new Button("Cancel");
+        btnSave.setOnAction(event -> saveAndClose());
+        btnCancel.setOnAction(actionEvent -> stage.close());
 
+        root.getChildren().addAll(btnSave, btnCancel);
 
         Scene scene = new Scene(root , 400, 700);
         stage.setScene(scene);

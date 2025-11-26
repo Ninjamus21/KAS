@@ -48,4 +48,9 @@ public class Hotel {
         }
         return pris;
     }
+
+    @Override
+    public String toString() {
+        return navn + " (" + address + ") - " + (isDoubleværelse ? "Doubleværelse" : "Enkeltværelse") + " - Pris: " + getPris();
+    }
 }

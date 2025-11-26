@@ -102,5 +102,8 @@ public class Tilmelding {
         return totalPris;
     }
 
+    public void setHotel(Hotel hotel) {
+        this.hotel = hotel;
+    }
 }
 
