@@ -1,5 +1,6 @@
 package Gui;
 
+import Model.Konference;
 import Model.Ledsager;
 import Model.Tilmelding;
 import Model.Udflugt;
@@ -13,12 +14,16 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class LedsagerInformation {
     private final Stage stage;
     private final TextField txfName = new TextField();
-    private final ListView <Udflugt> lvwUdflugter = new ListView<>();
+    private final ListView<Udflugt> lvwUdflugter = new ListView<>();
     private final Tilmelding tilmelding;
+    private Ledsager savedLedsager = null;
 
     public LedsagerInformation(Stage owner, Tilmelding tilmelding) {
         this.tilmelding = tilmelding;
@@ -41,7 +46,33 @@ public class LedsagerInformation {
 
         // Allow multiple selection
         lvwUdflugter.getSelectionModel().setSelectionMode(javafx.scene.control.SelectionMode.MULTIPLE);
-        lvwUdflugter.getItems().setAll(Storage.getUdflugts());
+
+        List<Udflugt> items = new ArrayList<>();
+        Konference konference = (tilmelding != null) ? tilmelding.getKonference() : null;
+
+        if (konference != null) {
+            // 1) prefer konference's own list
+            try {
+                if (!konference.getUdflugts().isEmpty()) {
+                    items.addAll(konference.getUdflugts());
+                }
+            } catch (Exception ignored) {}
+
+            // 2) if konference list is empty, filter global storage by ud.getKonference()
+            if (items.isEmpty()) {
+                try {
+                    for (Udflugt ud : Storage.getUdflugts()) {
+                        if (ud != null && ud.getKonference() != null && ud.getKonference().equals(konference)) {
+                            items.add(ud);
+                        }
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+
+
+        lvwUdflugter.getItems().setAll(items);
+
         udflugtInfoBox.addLabeledNode("Vælg Udflugter", lvwUdflugter);
         root.getChildren().add(udflugtInfoBox);
 
@@ -52,7 +83,7 @@ public class LedsagerInformation {
 
         root.getChildren().addAll(btnSave, btnCancel);
 
-        Scene scene = new Scene(root , 400, 700);
+        Scene scene = new Scene(root, 400, 500);
         stage.setScene(scene);
     }
 
@@ -84,6 +115,7 @@ public class LedsagerInformation {
 
         // create ledsager on the deltager (keeps model consistency)
         Ledsager ledsager = tilmelding.getDeltager().createLedsager(name);
+        this.savedLedsager = ledsager;
 
         // attach selected udflugter to this tilmelding for the ledsager
         ObservableList<Udflugt> selected = lvwUdflugter.getSelectionModel().getSelectedItems();
@@ -94,4 +126,7 @@ public class LedsagerInformation {
         return ledsager;
     }
 
+    public Ledsager getSavedLedsager(){
+        return savedLedsager;
+    }
 }

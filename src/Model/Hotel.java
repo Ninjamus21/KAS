@@ -22,7 +22,7 @@ public class Hotel {
         return new ArrayList<>(hotelTilkøbs);
     }
 
-    public HotelTilkøb createHotelTilkøb(String tillægNavn, int tillægPris) {
+    public HotelTilkøb createHotelTilkøb(String tillægNavn, double tillægPris) {
         HotelTilkøb hotelTilkøb = new HotelTilkøb(tillægNavn, tillægPris);
         hotelTilkøbs.add(hotelTilkøb);
         return hotelTilkøb;
@@ -43,14 +43,19 @@ public class Hotel {
     }
 
     public double getPris() {
-        if (isDoubleværelse) {
-            return pris * 1.25;
-        }
         return pris;
     }
 
     @Override
     public String toString() {
         return navn + " (" + address + ") - " + (isDoubleværelse ? "Doubleværelse" : "Enkeltværelse") + " - Pris: " + getPris();
+    }
+
+    public String getName() {
+        return navn;
+    }
+
+    public ArrayList<HotelTilkøb> getHotelTilkobs() {
+        return hotelTilkøbs;
     }
 }

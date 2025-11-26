@@ -81,25 +81,29 @@ public class Tilmelding {
     public double beregnPris() {
         double totalPris = 0.0;
 
-        // Pris for konference baseret på deltagerType
-        totalPris += konference.getKonferenceOrganisation().getPrisForDeltagerType(deltager.getDeltagerType());
+            // Pris for konference baseret på deltagerType
+            totalPris += konference.getKonferenceOrganisation().getPrisForDeltagerType(deltager.getDeltagerType());
+            totalPris = totalPris * deltager.getDayattending(); // Pris gange antal dage
 
-        // Pris for hotel
-        if (hotel != null) {
-            totalPris += hotel.getPris();
-        }
+            // Pris for hotel
+            if (hotel != null) {
+                totalPris += hotel.getPris() * (deltager.getDayattending() - 1); // Antal nætter er dage - 1
+            }
 
-        // Pris for hotel tilkøb
-        for (HotelTilkøb tilkøb : hotelTilkøbs) {
-            totalPris += tilkøb.getTillægPris();
-        }
+            // Pris for hotel tilkøb
+            for (HotelTilkøb tilkøb : hotelTilkøbs) {
+                totalPris += tilkøb.getTillægPris() * (deltager.getDayattending() - 1); // Antal nætter er dage - 1
+            }
 
-        // Pris for udflugter
-        for (Udflugt udflugt : udflugts) {
-            totalPris += udflugt.getPrice();
-        }
+            // Pris for udflugter
+            for (Udflugt udflugt : udflugts) {
+                totalPris += udflugt.getPrice();
+            }
+            if (deltager.isSpeaker()){
+                return totalPris - konference.getKonferenceOrganisation().getPrisForDeltagerType(deltager.getDeltagerType()) * deltager.getDayattending();
+            }
+            return totalPris;
 
-        return totalPris;
     }
 
     public void setHotel(Hotel hotel) {

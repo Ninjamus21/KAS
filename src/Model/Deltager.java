@@ -10,8 +10,7 @@ public class Deltager {
     private String address;
     private String city;
     private String country;
-    private LocalDate arrivalDate;
-    private LocalDate departureDate;
+    private int daysAttending = 1;
     private boolean isSpeaker;
     private String mobileNumber;
     private String companyNumber;
@@ -30,18 +29,9 @@ public class Deltager {
         this.mobileNumber = mobileNumber;
         this.deltagerType = deltagerType;
     }
-
-    // Constructor with Ledsager
-    public Deltager(String name, int age, String address, String city, String country, boolean isSpeaker, String mobileNumber, DeltagerType deltagerType, Ledsager ledsager) {
-        this.name = name;
-        this.age = age;
-        this.address = address;
-        this.city = city;
-        this.country = country;
-        this.isSpeaker = isSpeaker;
-        this.mobileNumber = mobileNumber;
-        this.deltagerType = deltagerType;
-        this.ledsager = ledsager;
+    public Deltager(String name, int age, String address, String city, String country, boolean speaker, String mobile, DeltagerType deltagerType, int dayattending) {
+        this(name, age, address, city, country, speaker, mobile, deltagerType);
+        setDayattending(dayattending);
     }
 
     public Ledsager getLedsager() {
@@ -60,5 +50,21 @@ public class Deltager {
 
     public DeltagerType getDeltagerType() {
         return deltagerType;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getDayattending() {
+        return daysAttending;
+    }
+
+    public void setDayattending(int dayattending) {
+        if (dayattending < 1) dayattending = 1;
+        this.daysAttending = dayattending;
+    }
+    public boolean isSpeaker() {
+        return isSpeaker;
     }
 }

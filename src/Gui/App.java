@@ -1,7 +1,10 @@
 package Gui;
 
+import Model.Tilmelding;
 import Storage.Storage;
 import javafx.application.Application;
+
+
 
 
 public class App {

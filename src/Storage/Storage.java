@@ -12,14 +12,16 @@ public class Storage {
     private static final ArrayList<Hotel> hotels = new ArrayList<>();
     private static final ArrayList<Konference> konferences = new ArrayList<>();
     private static final ArrayList<Udflugt> udflugts = new ArrayList<>();
+    private static final ArrayList<HotelTilkøb> hotelTilkøbs = new ArrayList<>();
 
     public static void initStorage() {
         // Hotels
-        Hotel hotel1 = new Hotel("Hotel Scandinavia", "HC Andersen boulevarden 44", 250, false);
-        Hotel hotel1D = new Hotel("Hotel Scandinavia - D", "HC Andersen boulevarden 44", 250, true);
-        Hotel hotel2 = new Hotel("Hotel Odense", "Jernbanegade 22", 200, false);
-        Hotel hotel2D = new Hotel("Hotel Odense - D", "Jernbanegade 22", 200, true);
-        Hotel hotel3 = new Hotel("Hotel Faaborg", "Nørregade 12", 150, true);
+        Hotel hotel1 = new Hotel("Den hvide svane", "HC Andersen boulevarden 44", 1050, false);
+        Hotel hotel1D = new Hotel("Den hvide svane - D", "HC Andersen boulevarden 44", 1250, true);
+        Hotel hotel2 = new Hotel("Høtel phonix", "Jernbanegade 22", 700, false);
+        Hotel hotel2D = new Hotel("Høtel phonix - D", "Jernbanegade 22", 800, true);
+        Hotel hotel3 = new Hotel("Pension tusindfryd", "Nørregade 12", 500, false);
+        Hotel hotel3D = new Hotel("Pension tusindfryd - D", "Nørregade 12", 600, true);
         hotels.add(hotel1);
         hotels.add(hotel1D);
         hotels.add(hotel2);
@@ -28,7 +30,7 @@ public class Storage {
 
         // Sample Konference + organisation
         KonferenceOrganisation org = new KonferenceOrganisation("Default Org");
-        Konference k1 = new Konference("Konference 2025", "Konferencevej 1", LocalDate.now().plusMonths(1), LocalDate.now().plusMonths(1).plusDays(2), org);
+        Konference k1 = new Konference("Hav og Himmel", "Konferencevej 1", LocalDate.now().plusMonths(1), LocalDate.now().plusMonths(1).plusDays(2), org);
         Konference k2 = new Konference("Workshop 2025", "Workshoppens adresse", LocalDate.now().plusMonths(2), LocalDate.now().plusMonths(2).plusDays(1), org);
         konferences.add(k1);
         konferences.add(k2);
@@ -36,17 +38,47 @@ public class Storage {
         // (optional) attach hotels to konference if desired
         k1.addHotel(hotel1);
         k1.addHotel(hotel1D);
-        k2.addHotel(hotel2);
-        k2.addHotel(hotel2D);
+        k1.addHotel(hotel2);
+        k1.addHotel(hotel2D);
+        k1.addHotel(hotel3);
+        k1.addHotel(hotel3D);
 
         // Sample Udflugts for k1
-        Udflugt u1 = new Udflugt("Bytur i Odense", LocalDate.now().plusMonths(1).plusDays(1), 100, true, k1);
-        Udflugt u2 = new Udflugt("Kunstmuseum", LocalDate.now().plusMonths(1).plusDays(2), 150, false, k1);
-        Udflugt u3 = new Udflugt("Havnerundfart", LocalDate.now().plusMonths(2).plusDays(1), 120, true, k1);
+        Udflugt u1 = new Udflugt("Byrundtur Odense", LocalDate.now().plusMonths(1).plusDays(1), 125, true, k1);
+        Udflugt u2 = new Udflugt("Egeskov", LocalDate.now().plusMonths(1).plusDays(2), 75, false, k1);
+        Udflugt u3 = new Udflugt("Trapholt", LocalDate.now().plusMonths(2).plusDays(1), 200, true, k1);
 
         // Sample Udflugts for k2
         Udflugt u4 = new Udflugt("Teambuilding i skoven", LocalDate.now().plusMonths(2).plusDays(1), 80, false, k2);
         Udflugt u5 = new Udflugt("Middag på lokal restaurant", LocalDate.now().plusMonths(2).plusDays(1), 200, true, k2);
+
+        udflugts.add(u1);
+        udflugts.add(u2);
+        udflugts.add(u3);
+        udflugts.add(u4);
+        udflugts.add(u5);
+
+        // Sample HotelTilkøb
+        HotelTilkøb ht1 = new HotelTilkøb("Wifi", 50);
+        HotelTilkøb ht2 = new HotelTilkøb("Wifi", 75);
+        HotelTilkøb ht3 = new HotelTilkøb("Bad", 200);
+        HotelTilkøb ht4 = new HotelTilkøb("Morgenmad", 100);
+        hotel1.createHotelTilkøb(ht1.getTillægNavn(), ht1.getTillægPris());
+        hotel1D.createHotelTilkøb(ht1.getTillægNavn(), ht1.getTillægPris());
+
+        hotel2.createHotelTilkøb(ht2.getTillægNavn(), ht2.getTillægPris());
+        hotel2D.createHotelTilkøb(ht2.getTillægNavn(), ht2.getTillægPris());
+
+        hotel2.createHotelTilkøb(ht3.getTillægNavn(), ht3.getTillægPris());
+        hotel2D.createHotelTilkøb(ht3.getTillægNavn(), ht3.getTillægPris());
+
+        hotel3.createHotelTilkøb(ht3.getTillægNavn(), ht3.getTillægPris());
+        hotel3D.createHotelTilkøb(ht3.getTillægNavn(), ht3.getTillægPris());
+
+        hotelTilkøbs.add(ht1);
+        hotelTilkøbs.add(ht2);
+        hotelTilkøbs.add(ht3);
+        hotelTilkøbs.add(ht4);
     }
 
     public static void addDeltager(Deltager d) {
@@ -75,5 +107,9 @@ public class Storage {
         deltagere.clear();
         hotels.clear();
         konferences.clear();
+    }
+
+    public static ArrayList<Konference> getKonferencer() {
+        return konferences;
     }
 }

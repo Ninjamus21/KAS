@@ -29,4 +29,12 @@ public class Udflugt {
     public double getPrice() {
         return price;
     }
+
+    public Konference getKonference() {
+        return konference;
+    }
+    @Override
+    public String toString() {
+        return name + " ( " + date + " ) " + "- Pris: " + price + (frokostIncluded ? " (Frokost inkluderet)" : "Ingen frokost");
+    }
 }

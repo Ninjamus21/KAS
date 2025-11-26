@@ -53,4 +53,11 @@ public class Konference {
         return name + " at " + address + " from " + startDato + " to " + slutDato;
     }
 
+    public ArrayList<Udflugt> getUdflugts() {
+        return udflugts;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

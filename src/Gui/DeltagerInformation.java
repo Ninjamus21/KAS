@@ -1,10 +1,6 @@
 package Gui;
 
-import Model.Deltager;
-import Model.DeltagerType;
-import Model.Hotel;
-import Model.Tilmelding;
-import Storage.Storage;
+import Model.*;
 import Storage.TilmeldingManager;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,10 +9,11 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class DeltagerInformation{
+public class DeltagerInformation {
     private final Stage stage;
     private final TextField txfName = new TextField();
     private final TextField txfAge = new TextField();
+    private final TextField txfDaysAttending = new TextField();
     private final TextField txfAddress = new TextField();
     private final TextField txfCity = new TextField();
     private final TextField txfCountry = new TextField();
@@ -46,6 +43,7 @@ public class DeltagerInformation{
         SectionVBox personalInfoBox = new SectionVBox("Personal");
         personalInfoBox.addLabeledNode("Name", txfName);
         personalInfoBox.addLabeledNode("Age", txfAge);
+        personalInfoBox.addLabeledNode("Days Attending", txfDaysAttending);
 
         SectionVBox contactInfoBox = new SectionVBox("Contact");
         contactInfoBox.addLabeledNode("Address", txfAddress);
@@ -68,17 +66,28 @@ public class DeltagerInformation{
         Button btnCancel = new Button("Cancel");
         btnSave.setOnAction(e -> saveAndClose());
         btnLedsager.setOnAction(e -> {
-            if(ledsagerAdded) {
+            if (ledsagerAdded) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Ledsager has already been added.");
                 alert.initOwner(stage);
                 alert.showAndWait();
                 return;
             }
+            // ensure deltaager is saved before adding ledsager
+            Deltager existing = ensureDeltagerCommitted();
+            if (existing == null) {
+                return; // error already shown
+            }
             LedsagerInformation ledsagerInformation = new LedsagerInformation(stage, tilmelding);
             ledsagerInformation.showAndWait();
+            Ledsager saved = ledsagerInformation.getSavedLedsager();
+            if (saved != null) {
+                // mark ledsager as added
+                ledsagerAdded = true;
+                btnLedsager.setDisable(true);
+            }
         });
         btnHotel.setOnAction(e -> {
-            if (hotelAdded){
+            if (hotelAdded) {
                 Alert alert = new Alert(Alert.AlertType.INFORMATION, "Hotel has already been added.");
                 alert.initOwner(stage);
                 alert.showAndWait();
@@ -98,16 +107,23 @@ public class DeltagerInformation{
 
         root.getChildren().addAll(personalInfoBox, contactInfoBox, additionalInfoBox, buttonBox);
 
-        Scene scene = new Scene(root , 400, 700);
+        Scene scene = new Scene(root, 400, 700);
         stage.setScene(scene);
     }
 
-    private Deltager saveAndClose() {
+    private Deltager ensureDeltagerCommitted() {
         if (tilmelding == null) {
             Alert alert = new Alert(Alert.AlertType.ERROR, "Tilmelding is null. Cannot save Deltager.");
             alert.initOwner(stage);
             alert.showAndWait();
             return null;
+        }
+        if (tilmelding.getDeltager() != null) {
+            try {
+                int days = Integer.parseInt(txfDaysAttending.getText().trim());
+                tilmelding.getDeltager().setDayattending(Math.max(1, days));
+            } catch (Exception ignored) {}
+            return tilmelding.getDeltager();
         }
 
         String name = txfName.getText().trim();
@@ -117,7 +133,32 @@ public class DeltagerInformation{
             alert.showAndWait();
             return null;
         }
-        int age = txfAge.getText().trim().isEmpty() ? 0 : Integer.parseInt(txfAge.getText().trim());
+        int age;
+        try {
+            age = Integer.parseInt(txfAge.getText().trim());
+        } catch (NumberFormatException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Age must be a valid number.");
+            alert.initOwner(stage);
+            alert.showAndWait();
+            return null;
+        }
+
+        int daysAttending = 1;
+        try {
+            daysAttending = Integer.parseInt(txfDaysAttending.getText().trim());
+            if (daysAttending < 1) {
+                Alert alert = new Alert(Alert.AlertType.ERROR, "Days Attending must be at least 1.");
+                alert.initOwner(stage);
+                alert.showAndWait();
+                return null;
+            }
+        } catch (NumberFormatException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Days Attending must be a valid number.");
+            alert.initOwner(stage);
+            alert.showAndWait();
+            return null;
+        }
+
         String address = txfAddress.getText().trim();
         String city = txfCity.getText().trim();
         String country = txfCountry.getText().trim();
@@ -125,19 +166,41 @@ public class DeltagerInformation{
         boolean isSpeaker = chkSpeaker.isSelected();
         DeltagerType deltagerType = cbType.getSelectionModel().getSelectedItem();
 
-        Deltager deltager = new Deltager(name, age, address, city, country, isSpeaker, mobile, deltagerType);
-        TilmeldingManager.commit(tilmelding, deltager);
+        if (address.isEmpty() || city.isEmpty() || country.isEmpty() || mobile.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Address, city, country and mobile must be provided.");
+            alert.initOwner(stage);
+            alert.showAndWait();
+            return null;
+        }
+        if (deltagerType == null) {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Deltager Type must be selected.");
+            alert.initOwner(stage);
+            alert.showAndWait();
+            return null;
+        }
 
-        stage.close();
+        Deltager deltager = new Deltager(name, age, address, city, country, isSpeaker, mobile, deltagerType);
+        // important: set days attending so beregnPris() can use it
+        deltager.setDayattending(daysAttending);
+
+        TilmeldingManager.commit(tilmelding, deltager);
         return deltager;
     }
-
+    private void saveAndClose() {
+        Deltager existing = ensureDeltagerCommitted();
+        if (existing != null) {
+            ConfirmBooking confirmBooking = new ConfirmBooking(stage, tilmelding);
+            confirmBooking.showAndWait();
+        }
+    }
     public void showAndWait() {
         stage.showAndWait();
     }
+
     public void setHotelAdded(boolean hotelAdded) {
         this.hotelAdded = hotelAdded;
     }
+
     public void setLedsagerAdded(boolean ledsagerAdded) {
         this.ledsagerAdded = ledsagerAdded;
     }

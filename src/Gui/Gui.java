@@ -7,6 +7,7 @@ import Storage.TilmeldingManager;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
@@ -48,8 +49,16 @@ public class Gui extends Application {
             DeltagerInformation deltagerInfomation = new DeltagerInformation(this.primaryStage, tilmeld);
             deltagerInfomation.showAndWait();
         });
-    }
-    public void getDeltagerInfo() {
 
+        SectionVBox VBoxAdmin = new SectionVBox("Admin");
+        pane.add(VBoxAdmin, 1, 0);
+        Label labelPassword = new Label();
+        TextField textFieldPassword = new TextField();
+        VBoxAdmin.addLabeledNode("Password", labelPassword);
+        VBoxAdmin.addNode(textFieldPassword);
+        VBoxAdmin.addButton("Login", event -> {
+            ShowAdminWindow showAdminWindow = new ShowAdminWindow(primaryStage);
+            showAdminWindow.showAndWait();
+        });
     }
 }

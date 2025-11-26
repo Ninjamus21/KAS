@@ -1,12 +1,14 @@
 package Gui;
 
 import Model.Hotel;
+import Model.HotelTilkøb;
 import Model.Tilmelding;
 import Storage.Storage;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -16,7 +18,9 @@ public class HotelInformation {
     private final Stage stage;
     private final Tilmelding tilmelding;
     private final ListView<Hotel> lvwHotels = new ListView<>();
+    private final ListView<HotelTilkøb> lvwHotelTilkob = new ListView<>();
     private Hotel selectedHotel = null;
+    private HotelTilkøb selectedHotelTilkob = null;
 
     public HotelInformation(Stage owner, Tilmelding tilmelding) {
         this.tilmelding = tilmelding;
@@ -52,6 +56,7 @@ public class HotelInformation {
         Button btnCancel = new Button("Cancel");
         btnSave.setOnAction(event -> {
             Hotel sel = lvwHotels.getSelectionModel().getSelectedItem();
+            HotelTilkøb tilkøbSel = lvwHotelTilkob.getSelectionModel().getSelectedItem();
             if (sel == null) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Vælg venligst et hotel!");
                 alert.initOwner(stage);
@@ -61,11 +66,21 @@ public class HotelInformation {
 
             if (tilmelding != null) {
                 tilmelding.addHotel(sel);
+                tilmelding.addHotelTilkøb(tilkøbSel);
             }
+            selectedHotelTilkob = tilkøbSel;
             selectedHotel = sel;
             saved = true;
             stage.close();
         });
+
+        SectionVBox hotelTilkobBox = new SectionVBox("Hotel Tilkøb");
+        hotelTilkobBox.addNode(lvwHotelTilkob);
+         lvwHotels.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
+             updateListview();
+         });
+        root.getChildren().add(hotelTilkobBox);
+
         btnCancel.setOnAction(event -> stage.close());
         buttonBox.addNode(btnSave);
         buttonBox.addNode(btnCancel);
@@ -82,5 +97,15 @@ public class HotelInformation {
 
     public Hotel getSelectedHotel() {
         return saved ? selectedHotel : null;
+    }
+    public HotelTilkøb getSelectedHotelTilkob() {
+        return saved ? selectedHotelTilkob : null;
+    }
+
+    public void updateListview(){
+        lvwHotelTilkob.getItems().clear();
+        if(lvwHotels.getSelectionModel().getSelectedItem() != null){
+            lvwHotelTilkob.getItems().addAll(lvwHotels.getSelectionModel().getSelectedItem().getHotelTilkobs());
+        }
     }
 }

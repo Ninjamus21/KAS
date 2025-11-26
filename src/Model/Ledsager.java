@@ -16,5 +16,4 @@ public class Ledsager {
         return name;
     }
 
-    
 }
